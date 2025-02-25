@@ -20,7 +20,6 @@ const Layout = () => {
 };
 
 function handleLogout() {
-  // Çıkış işlemleri
 }
 
 export default Layout; 

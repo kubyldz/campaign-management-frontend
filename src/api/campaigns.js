@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/campaigns";
 
 export const getCampaigns = async () => {
-    const token = localStorage.getItem("token"); // Token'ı al
+    const token = localStorage.getItem("token");
 
     if (!token) {
         console.error("JWT Token not found! Please login first.");
