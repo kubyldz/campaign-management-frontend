@@ -1,0 +1,359 @@
+.campaign-container {
+    padding: 20px;
+    background-color: #fff;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .campaign-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px 0;
+  }
+  
+  .campaign-header h1 {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .campaign-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .campaign-select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    min-width: 180px;
+    max-width: 100%;
+  }
+  
+  .campaign-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .campaign-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .search-section {
+    width: 100%;
+    margin: 15px 0;
+  }
+  
+  .search-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .search-inputs input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .search-button {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .campaign-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 15px 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+  }
+  
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  td {
+    font-size: 14px;
+  }
+  
+  tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .status-active {
+    color: #4CAF50;
+    font-weight: 500;
+  }
+  
+  .status-passive {
+    color: #F44336;
+    font-weight: 500;
+  }
+  
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  
+  .pagination-button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .pagination-button:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    color: #999;
+  }
+  
+  .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .page-numbers button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .page-numbers button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .page-numbers span {
+    margin: 0 5px;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .status-aktif {
+    color: #4CAF50;
+    font-weight: 500;
+  }
+  
+  .status-pasif {
+    color: #F44336;
+    font-weight: 500;
+  }
+
+  .campaign-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .campaign-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+  }
+  
+  .campaign-item h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+  
+  .campaign-item p {
+    margin: 5px 0;
+    color: #666;
+  }
+
+  /* Responsive tasarım için medya sorguları */
+  @media screen and (max-width: 768px) {
+    .campaign-container {
+      padding: 10px;
+    }
+
+    .campaign-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .campaign-actions {
+      justify-content: stretch;
+    }
+
+    .campaign-select {
+      width: 100%;
+    }
+
+    .search-inputs {
+      flex-direction: column;
+    }
+
+    .search-inputs input {
+      width: 100%;
+    }
+
+    .pagination {
+      gap: 5px;
+    }
+
+    .pagination-button {
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+
+    .page-numbers {
+      order: -1;
+      width: 100%;
+      justify-content: center;
+      margin: 10px 0;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .campaign-button {
+      width: 100%;
+    }
+
+    .page-numbers button {
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+  }
+
+  /* Düzenle butonu ve kolonu için stiller */
+  .edit-column {
+    width: 100px;
+    min-width: 100px;
+    text-align: center !important;
+  }
+
+  .edit-button {
+    padding: 6px 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .edit-button:hover {
+    background-color: #e9ecef;
+    color: #333;
+  }
+
+  .edit-button i {
+    font-size: 14px;
+  }
+
+  /* Mobil görünüm için düzenlemeler */
+  @media screen and (max-width: 768px) {
+    .edit-column {
+      width: 80px;
+      min-width: 80px;
+    }
+
+    .edit-button {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .edit-button i {
+      font-size: 12px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .edit-button span {
+      display: none;
+    }
+
+    .edit-button {
+      padding: 6px;
+    }
+
+    .edit-column {
+      width: 40px;
+      min-width: 40px;
+    }
+  }
+
+  /* Kampanya başlığı için stiller */
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .campaign-type-label {
+    color: #666;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  /* Mobil görünüm için düzenleme */
+  @media screen and (max-width: 768px) {
+    .header-title {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .campaign-type-label {
+      font-size: 14px;
+    }
+  }

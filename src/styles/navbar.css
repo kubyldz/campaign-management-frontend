@@ -1,0 +1,140 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-menu {
+  width: 250px;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-navbar {
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbar {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0 20px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 60px;
+  bottom: 0;
+  width: 250px;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+  transition: transform 0.3s ease;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+  background-color: #e0e0e0;
+}
+
+.nav-link i {
+  width: 20px;
+}
+
+.nav-right {
+  margin-left: auto;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Ana içerik için margin ekleyelim */
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+/* Aktif menü için stil */
+.nav-link.active {
+  color: #2196F3;
+  border-bottom: 2px solid #2196F3;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .nav-left {
+    transform: translateX(-100%);
+    z-index: 999;
+  }
+
+  .nav-left.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  /* Hamburger menü butonu */
+  .menu-toggle {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    color: #333;
+  }
+}
+
+@media (min-width: 769px) {
+  .menu-toggle {
+    display: none;
+  }
+} 
