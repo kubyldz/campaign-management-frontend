@@ -3,16 +3,16 @@
     background-color: #fff;
     min-height: 100vh;
     width: 100%;
-    max-width: 100%;
+    max-width: 1400px;
     overflow-x: hidden;
+    margin: 0 auto;
   }
   
   .campaign-header {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 10px 0;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
   }
   
   .campaign-header h1 {
@@ -22,24 +22,23 @@
   
   .campaign-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
   }
   
   .campaign-select {
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 4px;
     border: 1px solid #ddd;
-    min-width: 180px;
-    max-width: 100%;
+    min-width: 160px;
+    background-color: white;
   }
   
   .campaign-button {
     padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
-    color: white;
     cursor: pointer;
   }
   
@@ -48,14 +47,13 @@
   }
   
   .search-section {
-    width: 100%;
-    margin: 15px 0;
+    margin-bottom: 24px;
   }
   
   .search-inputs {
     display: flex;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 10px;
   }
   
   .search-inputs input {
@@ -63,13 +61,14 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     flex: 1;
-    min-width: 150px;
+    min-width: 200px;
   }
   
   .search-button {
     padding: 8px 16px;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
+    background-color: #f44336;
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
   }
@@ -86,22 +85,19 @@
   
   table {
     width: 100%;
-    min-width: 1000px;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
   
   th, td {
-    padding: 12px 15px;
+    padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
-    white-space: nowrap;
   }
   
   th {
     background-color: #f5f5f5;
     font-weight: 600;
-    font-size: 14px;
   }
   
   td {
@@ -112,57 +108,58 @@
     background-color: #f9f9f9;
   }
   
-  .status-active {
+  .status-ACTIVE {
     color: #4CAF50;
     font-weight: 500;
   }
   
-  .status-passive {
+  .status-PASSIVE {
     color: #F44336;
+    font-weight: 500;
+  }
+  
+  .status-ALL {
+    color: #2196F3;
     font-weight: 500;
   }
   
   .pagination {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 10px 0;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
   }
   
   .pagination-button {
     padding: 8px 16px;
+    background-color: #f5f5f5;
     border: 1px solid #ddd;
-    background-color: white;
-    cursor: pointer;
     border-radius: 4px;
+    cursor: pointer;
   }
   
   .pagination-button:disabled {
-    background-color: #f5f5f5;
+    opacity: 0.5;
     cursor: not-allowed;
-    color: #999;
   }
   
   .page-numbers {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    gap: 8px;
   }
   
   .page-numbers button {
     padding: 8px 12px;
     border: 1px solid #ddd;
-    background-color: white;
-    cursor: pointer;
     border-radius: 4px;
+    cursor: pointer;
   }
   
   .page-numbers button.active {
-    background-color: #007bff;
+    background-color: #2196F3;
     color: white;
-    border-color: #007bff;
+    border-color: #2196F3;
   }
   
   .page-numbers span {
@@ -217,7 +214,7 @@
 
     .campaign-header {
       flex-direction: column;
-      align-items: stretch;
+      gap: 16px;
     }
 
     .campaign-actions {
@@ -278,23 +275,18 @@
 
   .edit-button {
     padding: 6px 12px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
+    background-color: #2196F3;
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 13px;
-    color: #666;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
+    gap: 6px;
   }
 
   .edit-button:hover {
-    background-color: #e9ecef;
-    color: #333;
+    background-color: #0056b3;
   }
 
   .edit-button i {
@@ -337,13 +329,12 @@
   .header-title {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .campaign-type-label {
     color: #666;
-    font-size: 16px;
-    font-weight: normal;
+    font-size: 0.9em;
   }
 
   /* Mobil görünüm için düzenleme */

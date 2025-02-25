@@ -5,7 +5,6 @@ import Register from './pages/Register';
 import Campaign from './components/Campaign';
 import Navbar from './components/Navbar';
 import ScheduledTasks from './components/ScheduledTasks';
-import AppMenu from './components/AppMenu';
 import Offer from './components/Offer';
 import './styles/variables.css';
 import './styles/layout.css';
@@ -15,9 +14,11 @@ const Layout = ({ children }) => {
   return (
     <div className="app-container">
       <Navbar />
-      <main className="main-content">
-        {children}
-      </main>
+      <div className="main-content">
+        <div className="content">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -62,8 +63,17 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/offer/:campaignId"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Offer />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
         <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/offer/:campaignId" element={<Offer />} />
       </Routes>
     </Router>
   );
