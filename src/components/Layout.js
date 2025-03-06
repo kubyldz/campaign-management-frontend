@@ -13,7 +13,7 @@ const Layout = () => {
       </div>
       {/* Sol alt menü */}
       <div className="bottom-left-menu">
-        <button onClick={handleLogout}>Çıkış</button>
+        <button onClick={handleLogout}>Çık222ş</button>
       </div>
     </div>
   );
@@ -22,4 +22,4 @@ const Layout = () => {
 function handleLogout() {
 }
 
-export default Layout; 
+export default Layout;

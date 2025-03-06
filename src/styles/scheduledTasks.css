@@ -1,8 +1,24 @@
-.scheduled-tasks-container {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 100vh;
   padding: 20px;
+  background-color: #fff;
+}
+
+.scheduled-tasks-container {
+  width: 100%;
+  max-width: none;
+  border-radius: 8px;
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.scheduled-form {
+  padding-top: 20px;
 }
 
 .task-header {
@@ -353,7 +369,6 @@
   gap: 0.25rem !important;
 }
 
-/* DatePicker stilleri */
 .react-datepicker-wrapper {
   width: 100%;
 }
