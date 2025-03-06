@@ -19,13 +19,6 @@
   flex-direction: column;
 }
 
-.top-navbar {
-  padding: 1rem;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: flex-end;
-}
 
 .navbar {
   background-color: #fff;
@@ -35,10 +28,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 1000;
+  left: 0;
+  width: 100%;
 }
+
+
 
 .nav-left {
   display: flex;
@@ -52,17 +49,20 @@
   padding: 20px;
   border-right: 1px solid #e0e0e0;
   transition: transform 0.3s ease;
+  gap: 15px;
+  align-items: baseline;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px;
+  gap: 16px;
+  padding: 10px 15px;
   color: #333;
   text-decoration: none;
   border-radius: 4px;
   transition: background-color 0.2s;
+  margin-right: 8px;
 }
 
 .nav-link:hover {
@@ -73,40 +73,33 @@
   width: 20px;
 }
 
-.nav-right {
-  margin-left: auto;
-}
-
 .logout-button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
   border: none;
   border-radius: 4px;
   background-color: #f44336;
   color: white;
   cursor: pointer;
+  padding: 10px 15px;
 }
 
 .logout-button:hover {
   background-color: #d32f2f;
 }
 
-/* Ana içerik için margin ekleyelim */
 .main-content {
   margin-left: 250px;
   padding: 20px;
   transition: margin-left 0.3s ease;
 }
 
-/* Aktif menü için stil */
 .nav-link.active {
   color: #2196F3;
   border-bottom: 2px solid #2196F3;
 }
 
-/* Responsive tasarım */
 @media (max-width: 768px) {
   .nav-left {
     transform: translateX(-100%);
@@ -121,7 +114,6 @@
     margin-left: 0;
   }
 
-  /* Hamburger menü butonu */
   .menu-toggle {
     display: block;
     background: none;

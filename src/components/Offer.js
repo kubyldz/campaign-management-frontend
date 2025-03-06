@@ -52,7 +52,6 @@ const Offer = () => {
 
   return (
     <div className="scheduled-tasks-container">
-      <button onClick={handleBack} style={{ marginBottom: '20px' }}>Geri</button>
       <div className="task-header">
         <div className="task-tabs">
           <button className="tab-button">Kampanya</button>

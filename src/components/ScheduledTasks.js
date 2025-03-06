@@ -1,136 +1,190 @@
-import React, { useState } from "react";
-import '../styles/scheduledTasks.css'; 
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import "../styles/scheduledTasks.css";
 
 const ScheduledTasks = () => {
+  const navigate = useNavigate();
+
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchData, setSearchData] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [formData, setFormData] = useState({
+    scheduledType: "Kampanyalar",
     campaignType: "Unica",
-    campaignOffer: [],
+    campaignOffers: [],
     status: "Aktif",
-    date: "02/19/2025 02:40 PM",
+    date: new Date().toISOString().slice(0, 16),
   });
 
+  const tasksPerPage = 8;
+
+  // Ekran genişliği değişimini yönet
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  // Sayfa değişimi
+  const handlePageChange = useCallback((pageNumber) => {
+    setCurrentPage(pageNumber);
+  }, []);
+
+  // Form değişikliklerini yönetme
+  const handleInputChange = (e) => {
+    const { name, value, options } = e.target;
+    if (name === "campaignOffers") {
+      const selectedValues = Array.from(options)
+          .filter((option) => option.selected)
+          .map((option) => option.value);
+      setFormData((prev) => ({ ...prev, campaignOffers: selectedValues }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // Yeni işlem kaydetme
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/tasks/create", formData);
+      setTasks([...tasks, response.data]);
+      setFormData({
+        scheduledType: "Kampanyalar",
+        campaignType: "Unica",
+        campaignOffers: [],
+        status: "Aktif",
+        date: new Date().toISOString().slice(0, 16),
+      });
+    } catch (error) {
+      console.error("Kaydetme Hatası:", error);
+    }
+  };
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/tasks/getAllTasks");
+      if (response.data) {
+        setTasks(response.data);
+      }
+    } catch (error) {
+      console.error("Görev Çekme Hatası:", error);
+      setError("Görevler yüklenirken bir hata oluştu");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const paginatedTasks = useMemo(() => {
+    const startIndex = (currentPage - 1) * tasksPerPage;
+    const endIndex = startIndex + tasksPerPage;
+    return tasks.slice(startIndex, endIndex);
+  }, [tasks, currentPage, tasksPerPage]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(tasks.length / tasksPerPage));
+  }, [tasks, tasksPerPage]);
+
   return (
-    <div className="scheduled-tasks-container min-h-screen p-6 bg-gray-100">
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="task-header text-2xl font-bold mb-4 text-gray-800">Zamanlı İşlemler</h1>
+      <div className="scheduled-tasks-container">
+        <div className="scheduled-tasks-header">
+          <h2>Zamanlanmış İşlemler</h2>
+        </div>
 
-        <form className="task-form space-y-4">
+        <form className="scheduled-form" onSubmit={handleSave}>
           <div className="form-group">
-            <label className="block font-medium text-gray-700">Zamanlı İşlem Tipi</label>
-            <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-              <option>Kampanyalar</option>
-              <option>Diğer</option>
+            <label>Zamanlı İşlem Tipi</label>
+            <select name="scheduledType" value={formData.scheduledType} onChange={handleInputChange}>
+              <option value="Kampanyalar">Kampanyalar</option>
+              <option value="Diğer">Diğer</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label className="block font-medium text-gray-700">Kampanya Tipi</label>
-            <select
-              value={formData.campaignType}
-              onChange={(e) => setFormData({ ...formData, campaignType: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option>Unica</option>
-              <option>Unica Arşiv</option>
+            <label>Kampanya Tipi</label>
+            <select name="campaignType" value={formData.campaignType} onChange={handleInputChange}>
+              <option value="Unica">Unica</option>
+              <option value="Unica Arşiv">Unica Arşiv</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label className="block font-medium text-gray-700">Kampanya Teklif Adı</label>
-            <div className="flex flex-wrap gap-2">
-              {formData.campaignOffer.map((offer, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-700"
-                >
-                  {offer}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="block font-medium text-gray-700">Durum</label>
-            <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-              <option>Aktif</option>
-              <option>Pasif</option>
+            <label>Kampanya Teklif Adı</label>
+            <select name="campaignOffers" multiple value={formData.campaignOffers} onChange={handleInputChange}>
+              <option value="Oim Buton Kontrolü">Oim Buton Kontrolü</option>
+              <option value="OIM_REGRESYON_COKLU_TEST_SUPPRESSION">OIM_REGRESYON_COKLU_TEST_SUPPRESSION</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label className="block font-medium text-gray-700">Tarih</label>
-            <input
-              type="text"
-              value={formData.date}
-              readOnly
-              className="w-full p-2 border border-gray-300 rounded-lg bg-gray-100"
-            />
+            <label>Durum</label>
+            <select name="status" value={formData.status} onChange={handleInputChange}>
+              <option value="Aktif">Aktif</option>
+              <option value="Pasif">Pasif</option>
+            </select>
           </div>
 
-          <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-200">
-            Kaydet
-          </button>
+          <div className="form-group">
+            <label>Tarih</label>
+            <input type="datetime-local" name="date" value={formData.date} onChange={handleInputChange} />
+          </div>
+
+          <button type="submit" className="save-button">Kaydet</button>
         </form>
 
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800">Zamanlanmış Teklifler</h2>
-          <table className="w-full mt-2 border border-gray-300 text-gray-700 bg-white">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="p-2 border">Servis Tipi</th>
-                <th className="p-2 border">Kodu</th>
-                <th className="p-2 border">Kampanya Teklifi</th>
-                <th className="p-2 border">İşlem Tipi</th>
-                <th className="p-2 border">İşlem Zamanı</th>
-                <th className="p-2 border">İşlem Durumu</th>
-                <th className="p-2 border">Aksiyon</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border flex gap-2">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200">
-                    Düzenle
-                  </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">
-                    Sil
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border"></td>
-                <td className="p-2 border flex gap-2">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200">
-                    Düzenle
-                  </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">
-                    Sil
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="flex justify-between mt-4 text-gray-700">
-          <button className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 transition duration-200">Önceki</button>
-          <span className="font-semibold">1</span>
-          <button className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 transition duration-200">Sonraki</button>
+        <div className="scheduled-tasks-table">
+          {loading ? <div className="loading">Yükleniyor...</div> : (
+              <table>
+                <thead>
+                <tr>
+                  <th>İşlem</th>
+                  <th>Servis Tipi</th>
+                  <th>Kodu</th>
+                  <th>Kampanya Teklifi</th>
+                  <th>İşlem Tipi</th>
+                  <th>İşlem Zamanı</th>
+                  <th>İşlem Durumu</th>
+                </tr>
+                </thead>
+                <tbody>
+                {paginatedTasks.map((task) => (
+                    <tr key={task.id}>
+                      <td>
+                        <button className="edit-button">Düzenle</button>
+                        <button className="delete-button">Sil</button>
+                      </td>
+                      <td>{task.serviceType}</td>
+                      <td>{task.id}</td>
+                      <td>{task.offer}</td>
+                      <td>{task.processType}</td>
+                      <td>{task.processTime}</td>
+                      <td>{task.status}</td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>
+          )}
         </div>
       </div>
-    </div>
   );
 };
 
 export default ScheduledTasks;
+
+
+
+

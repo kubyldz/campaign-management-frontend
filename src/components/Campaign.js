@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import '../styles/campaign.css';
@@ -6,7 +6,8 @@ import axios from 'axios';
 
 const Campaign = () => {
   const navigate = useNavigate();
-  const [campaignType, setCampaignType] = useState('ALL');
+  
+  // State management
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,61 +18,56 @@ const Campaign = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
-
+  const [activeStatus, setActiveStatus] = useState('ALL');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const campaignsPerPage = 8; // Set the number of campaigns per page
+  const campaignsPerPage = 8;
 
-  const campaignTypes = {
+  // Constants
+  const statusTypes = useMemo(() => ({
     ALL: {
       label: 'Tümü',
-      value: 'ALL'  
+      value: 'ALL'
     },
-    SEASONAL: {
-      label: 'Sezonluk Kampanya',
-      value: 'SEASONAL'  
+    ACTIVE: {
+      label: 'Aktif Kampanyalar',
+      value: 'ACTIVE'
     },
-    STANDARD: {
-      label: 'Standart Kampanya',
-      value: 'STANDARD'  
+    PASSIVE: {
+      label: 'Pasif Kampanyalar',
+      value: 'PASSIVE'
     }
-  };
+  }), []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  // Handlers
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth <= 768);
   }, []);
 
-  useEffect(() => {
-    checkAuth();
+  const handleStatusChange = useCallback((e) => {
+    setActiveStatus(e.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((pageNumber) => {
+    setCurrentPage(pageNumber);
+  }, []);
+
+  const handleEdit = useCallback((campaignId) => {
+    navigate(`/offer/${campaignId}`);
   }, [navigate]);
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
+  const handleSearchChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setSearchData(prev => ({ ...prev, [name]: value }));
+  }, []);
 
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      await fetchCampaigns();
-    } catch (error) {
-      console.error('Auth Error:', error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
-    }
-  };
+  const clearSearch = useCallback(() => {
+    setSearchData({ campaign: '', offer: '', treatment: '' });
+  }, []);
 
-  const fetchCampaigns = async (type = campaignType) => {
+  // Data fetching
+  const fetchCampaigns = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -82,54 +78,103 @@ const Campaign = () => {
         return;
       }
 
-      let url;
-      if (type === 'ALL') {
-        url = '/campaigns/getAllCampaigns';
-      } else {
-        url = `/campaigns/getByCampaignType?campaignType=${encodeURIComponent(type)}`;
-      }
-
-      const response = await api.get(url);
-      
+      const response = await api.get('/campaigns/getAllCampaigns');
       if (response.data) {
         setCampaigns(response.data);
-        setFilteredCampaigns(response.data);
       }
     } catch (error) {
-      console.error('Campaign Error:', error.response ? error.response.data : error.message);
+      console.error('Campaign Error:', error);
       if (error.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       } else {
-        setError(error.response?.data?.message || 'Kampanyalar yüklenirken bir hata oluştu');
+        setError('Kampanyalar yüklenirken bir hata oluştu');
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const handleCampaignTypeChange = async (e) => {
+  // Filtered campaigns
+  const filteredCampaigns = useMemo(() => {
+    let filtered = [...campaigns];
+
+    // Search filter
+    if (searchData.campaign || searchData.offer || searchData.treatment) {
+      filtered = filtered.filter(campaign => {
+        const matchCampaign = campaign.campaign.toLowerCase().includes(searchData.campaign.toLowerCase());
+        const matchOffer = campaign.offer.toLowerCase().includes(searchData.offer.toLowerCase());
+        const matchTreatment = campaign.treatment.toLowerCase().includes(searchData.treatment.toLowerCase());
+        return matchCampaign && matchOffer && matchTreatment;
+      });
+    }
+
+    // Status filter
+    if (activeStatus !== 'ALL') {
+      filtered = filtered.filter(campaign => {
+        // UNICA servis tipli kampanyalar her zaman aktif olarak değerlendirilir
+        const isActive = campaign.serviceType === 'UNICA' ? true : campaign.isActive;
+        return activeStatus === 'ACTIVE' ? isActive : !isActive;
+      });
+    }
+
+    return filtered;
+  }, [campaigns, searchData, activeStatus]);
+
+  // Pagination
+  const paginatedCampaigns = useMemo(() => {
+    const startIndex = (currentPage - 1) * campaignsPerPage;
+    const endIndex = startIndex + campaignsPerPage;
+    return filteredCampaigns.slice(startIndex, endIndex);
+  }, [filteredCampaigns, currentPage, campaignsPerPage]);
+
+  // Effects
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    fetchCampaigns();
+  }, [navigate, fetchCampaigns]);
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredCampaigns.length / campaignsPerPage));
+  }, [filteredCampaigns, campaignsPerPage]);
+
+  // Export function
+  const exportCampaignsToExcel = async () => {
     try {
-      const selectedType = e.target.value;
-      setCampaignType(selectedType);
-      await fetchCampaigns(selectedType);
-    } catch (error) {
-      console.error('Campaign Type Change Error:', error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
+      const token = localStorage.getItem('token');
+      if (!token) {
         navigate('/login');
+        return;
       }
+
+      const response = await axios.get('http://localhost:8080/api/campaigns/export', {
+        responseType: 'blob',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'campaigns.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Export Error:', error);
     }
   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    fetchCampaigns(campaignType); // Fetch campaigns for the selected page
-  };
-
-  const goToFirstPage = () => handlePageChange(1);
-  const goToLastPage = () => handlePageChange(totalPages);
-
+  // Render helpers
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = isMobile ? 3 : 5;
@@ -164,86 +209,28 @@ const Campaign = () => {
     return pageNumbers;
   };
 
-  const handleEdit = (campaignId) => {
-    navigate(`/offer/${campaignId}`); // Redirect to Offer.js with campaignId
-  };
-
-  const handleSearch = () => {
-    const { campaign, offer, treatment } = searchData;
-
-    const filtered = campaigns.filter(c => {
-      const matchesCampaign = c.campaign.toLowerCase().includes(campaign.toLowerCase());
-      const matchesOffer = c.offer.toLowerCase().includes(offer.toLowerCase());
-      const matchesTreatment = c.treatment.toLowerCase().includes(treatment.toLowerCase());
-      return matchesCampaign && matchesOffer && matchesTreatment;
-    });
-
-    setFilteredCampaigns(filtered);
-  };
-
-  const handleSearchChange = (e) => {
-    const { name, value } = e.target;
-    setSearchData(prevState => ({ ...prevState, [name]: value }));
-    handleSearch(); 
-  };
-
-  const exportCampaignsToExcel = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      const response = await axios.get('http://localhost:8080/api/campaigns/export', {
-        responseType: 'blob', 
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'campaigns.xlsx'); 
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error('Export Error:', error);
-    }
-  };
-
-  // Fetch campaigns based on currentPage
-  const indexOfLastCampaign = currentPage * campaignsPerPage;
-  const indexOfFirstCampaign = indexOfLastCampaign - campaignsPerPage;
-  const currentCampaigns = filteredCampaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
-
-  // Function to handle page change
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   return (
     <div className="campaign-container">
       <div className="campaign-header">
         <div className="header-title">
           <h2>Kampanyalar</h2>
           <span className="campaign-type-label">
-            {campaignTypes[campaignType] ? `(${campaignTypes[campaignType].label})` : '(Geçersiz Kampanya Tipi)'}
+            {statusTypes[activeStatus]?.label}
           </span>
         </div>
         <div className="campaign-actions">
           <select 
             className="campaign-select" 
-            value={campaignType}
-            onChange={handleCampaignTypeChange}
+            value={activeStatus}
+            onChange={handleStatusChange}
           >
-            {Object.entries(campaignTypes).map(([key, { label }]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
+            {Object.entries(statusTypes).map(([key, { label }]) => (
+              <option key={key} value={key}>{label}</option>
             ))}
           </select>
-          <button className="campaign-button" onClick={exportCampaignsToExcel}>Excel</button>
+          <button className="campaign-button" onClick={exportCampaignsToExcel}>
+            <i className="fas fa-file-excel"></i> Excel
+          </button>
         </div>
       </div>
 
@@ -251,28 +238,23 @@ const Campaign = () => {
       
       <div className="search-section">
         <div className="search-inputs">
-          <input
-            type="text"
-            name="campaign"
-            placeholder="Kampanya"
-            value={searchData.campaign}
-            onChange={handleSearchChange}
-          />
-          <input
-            type="text"
-            name="offer"
-            placeholder="Teklif"
-            value={searchData.offer}
-            onChange={handleSearchChange}
-          />
-          <input
-            type="text"
-            name="treatment"
-            placeholder="Treatment"
-            value={searchData.treatment}
-            onChange={handleSearchChange}
-          />
-          <button className="search-button" onClick={() => setSearchData({ campaign: '', offer: '', treatment: '' })}>Temizle</button>
+          {[
+            { name: 'campaign', label: 'Kampanya' },
+            { name: 'offer', label: 'Teklif' },
+            { name: 'treatment', label: 'Treatment' }
+          ].map(field => (
+            <input
+              key={field.name}
+              type="text"
+              name={field.name}
+              placeholder={`${field.label} Ara...`}
+              value={searchData[field.name]}
+              onChange={handleSearchChange}
+            />
+          ))}
+          <button className="search-button" onClick={clearSearch}>
+            <i className="fas fa-times"></i> Temizle
+          </button>
         </div>
       </div>
 
@@ -299,8 +281,8 @@ const Campaign = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentCampaigns.map((campaign, index) => (
-                  <tr key={index}>
+                {paginatedCampaigns.map((campaign) => (
+                  <tr key={campaign.id}>
                     <td className="edit-column">
                       <button 
                         className="edit-button"
@@ -322,8 +304,8 @@ const Campaign = () => {
                     <td>{campaign.endDate}</td>
                     <td>{campaign.priority}</td>
                     <td>
-                      <span className={`status-${campaign.status.toLowerCase()}`}>
-                        {campaign.status}
+                      <span className={`status-${campaign.serviceType === 'UNICA' || campaign.isActive ? 'ACTIVE' : 'PASSIVE'}`}>
+                        {campaign.serviceType === 'UNICA' || campaign.isActive ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                   </tr>
@@ -337,7 +319,7 @@ const Campaign = () => {
       <div className="pagination">
         <button 
           className="pagination-button" 
-          onClick={goToFirstPage}
+          onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
         >
           İlk Sayfa
@@ -373,7 +355,7 @@ const Campaign = () => {
         </button>
         <button 
           className="pagination-button" 
-          onClick={goToLastPage}
+          onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
         >
           Son Sayfa
