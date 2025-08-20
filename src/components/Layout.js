@@ -1,25 +1,35 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 
 const Layout = () => {
-  return (
-    <div className="app-container">
-      <Navbar />
-      <div className="main-content">
-        <div className="content">
-          <Outlet />
-        </div>
-      </div>
-      {/* Sol alt menü */}
-      <div className="bottom-left-menu">
-        <button onClick={handleLogout}>Çık222ş</button>
-      </div>
-    </div>
-  );
-};
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
-function handleLogout() {
-}
+    const handleLogout = () => {
+        setIsMenuOpen(false);
+        navigate('/login');
+    };
+
+    return (
+        <div className="app-container">
+            <Navbar
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+                handleLogout={handleLogout}
+            />
+
+            <div className={`main-content ${isMenuOpen ? 'menu-open' : ''}`}>
+                <div className="content">
+                    <Outlet />
+                </div>
+            </div>
+
+            <div className="bottom-left-menu">
+                <button onClick={handleLogout}>Çıkış</button>
+            </div>
+        </div>
+    );
+};
 
 export default Layout;

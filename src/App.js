@@ -1,3 +1,4 @@
+// App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
@@ -9,74 +10,71 @@ import Offer from './components/Offer';
 import './styles/variables.css';
 import './styles/layout.css';
 import './styles/auth.css';
+import MessagesPage from "./pages/MessagesPage";
 
-const Layout = ({ children }) => {
-  return (
+const Layout = ({ children }) => (
     <div className="app-container">
-      <Navbar />
-      <div className="main-content">
-        <div className="content">
-          {children}
+        <Navbar />
+        <div className="main-content">
+            <div className="content">{children}</div>
         </div>
-      </div>
     </div>
-  );
-};
+);
 
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const location = useLocation();
-
-  if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  return children;
+    const token = localStorage.getItem('token');
+    const location = useLocation();
+    if (!token) return <Navigate to="/login" state={{ from: location }} replace />;
+    return children;
 };
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected routes */}
-        <Route
-          path="/campaigns"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <Campaign />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/scheduled-tasks"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <ScheduledTasks />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/offer/:campaignId"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <Offer />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        <Router>
+            <Routes>
+
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+
+
+                <Route
+                    path="/campaigns"
+                    element={
+                        <PrivateRoute>
+                            <Layout><Campaign /></Layout>
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/scheduled-tasks"
+                    element={
+                        <PrivateRoute>
+                            <Layout><ScheduledTasks /></Layout>
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/offer/:campaignId"
+                    element={
+                        <PrivateRoute>
+                            <Layout><Offer /></Layout>
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/bundle-messages"
+                    element={
+                        <PrivateRoute>
+                            <Layout><MessagesPage /></Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route path="/" element={<Navigate to="/login" />} />
+
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;

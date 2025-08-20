@@ -51,12 +51,12 @@ const Offer = () => {
   };
 
   return (
-    <div className="scheduled-tasks-container">
+    <div className="offer-container">
       <div className="task-header">
         <div className="task-tabs">
-          <button className="tab-button">Kampanya</button>
-          <button className="tab-button">Teklif</button>
-          <button className="tab-button">Treatment</button>
+          <form className="task-form">Kampanya</form>
+          <form className="task-form">Teklif</form>
+          <form className="task-form">Treatment</form>
         </div>
       </div>
 
@@ -230,36 +230,38 @@ const Offer = () => {
           </div>
 
           <div className="button-actions">
-            <table>
-              <thead>
+            <div className="table-responsive">
+              <table>
+                <thead>
                 <tr>
                   <th>Teklif Sayfası</th>
                   <th>Buton İsmi</th>
                   <th>Aksiyon</th>
                   <th>URL</th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 {buttons.map((button, index) => (
-                  <tr key={index}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={button.checked}
-                        readOnly
-                      />
-                    </td>
-                    <td>{button.label}</td>
-                    <td>{button.action}</td>
-                    <td>{button.url || '-'}</td>
-                  </tr>
+                    <tr key={index}>
+                      <td>
+                        <input
+                            type="checkbox"
+                            checked={button.checked}
+                            readOnly
+                        />
+                      </td>
+                      <td>{button.label}</td>
+                      <td>{button.action}</td>
+                      <td>{button.url || '-'}</td>
+                    </tr>
                 ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div className="form-actions">
+          <div className="form-actions">
           <button type="submit" className="save-button">Kaydet</button>
         </div>
       </form>

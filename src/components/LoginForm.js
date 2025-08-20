@@ -75,7 +75,7 @@ const LoginForm = () => {
                     </button>
                 </form>
                 <Link to="/register" className="auth-link">
-                    Create Acccount
+                    Create Account
                 </Link>
             </div>
         </div>

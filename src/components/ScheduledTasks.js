@@ -23,17 +23,14 @@ const ScheduledTasks = () => {
 
   const tasksPerPage = 8;
 
-  // Ekran genişliği değişimini yönet
   const handleResize = useCallback(() => {
     setIsMobile(window.innerWidth <= 768);
   }, []);
 
-  // Sayfa değişimi
   const handlePageChange = useCallback((pageNumber) => {
     setCurrentPage(pageNumber);
   }, []);
 
-  // Form değişikliklerini yönetme
   const handleInputChange = (e) => {
     const { name, value, options } = e.target;
     if (name === "campaignOffers") {
@@ -64,21 +61,7 @@ const ScheduledTasks = () => {
     }
   };
 
-  const fetchTasks = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get("/tasks/getAllTasks");
-      if (response.data) {
-        setTasks(response.data);
-      }
-    } catch (error) {
-      console.error("Görev Çekme Hatası:", error);
-      setError("Görevler yüklenirken bir hata oluştu");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
 
   const paginatedTasks = useMemo(() => {
     const startIndex = (currentPage - 1) * tasksPerPage;
@@ -91,9 +74,7 @@ const ScheduledTasks = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+
 
   useEffect(() => {
     setTotalPages(Math.ceil(tasks.length / tasksPerPage));
@@ -147,43 +128,45 @@ const ScheduledTasks = () => {
         </form>
 
         <div className="scheduled-tasks-table">
-          {loading ? <div className="loading">Yükleniyor...</div> : (
-              <table>
-                <thead>
-                <tr>
-                  <th>İşlem</th>
-                  <th>Servis Tipi</th>
-                  <th>Kodu</th>
-                  <th>Kampanya Teklifi</th>
-                  <th>İşlem Tipi</th>
-                  <th>İşlem Zamanı</th>
-                  <th>İşlem Durumu</th>
-                </tr>
-                </thead>
-                <tbody>
-                {paginatedTasks.map((task) => (
-                    <tr key={task.id}>
-                      <td>
-                        <button className="edit-button">Düzenle</button>
-                        <button className="delete-button">Sil</button>
-                      </td>
-                      <td>{task.serviceType}</td>
-                      <td>{task.id}</td>
-                      <td>{task.offer}</td>
-                      <td>{task.processType}</td>
-                      <td>{task.processTime}</td>
-                      <td>{task.status}</td>
-                    </tr>
-                ))}
-                </tbody>
-              </table>
-          )}
+          <div className="table-responsive">
+            {loading ? <div className="loading">Yükleniyor...</div> : (
+                <table>
+                  <thead>
+                  <tr>
+                    <th>İşlem</th>
+                    <th>Servis Tipi</th>
+                    <th>Kodu</th>
+                    <th>Kampanya Teklifi</th>
+                    <th>İşlem Tipi</th>
+                    <th>İşlem Zamanı</th>
+                    <th>İşlem Durumu</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {paginatedTasks.map((task) => (
+                      <tr key={task.id}>
+                        <td>
+                          <button className="edit-button">Düzenle</button>
+                          <button className="delete-button">Sil</button>
+                        </td>
+                        <td>{task.serviceType}</td>
+                        <td>{task.id}</td>
+                        <td>{task.offer}</td>
+                        <td>{task.processType}</td>
+                        <td>{task.processTime}</td>
+                        <td>{task.status}</td>
+                      </tr>
+                  ))}
+                  </tbody>
+                </table>
+            )}
+          </div>
         </div>
       </div>
-  );
-};
+        );
+        };
 
-export default ScheduledTasks;
+        export default ScheduledTasks;
 
 
 

@@ -247,23 +247,21 @@
 .table-responsive {
   overflow-x: auto;
   margin-top: 1rem;
+  width: 100%;
 }
 
 .table-responsive table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-}
-
-.table-responsive th {
-  background-color: #f9fafb;
-  font-weight: 600;
+  table-layout: auto; /* 👈 Hücre genişliği içeriğe göre ayarlanır */
 }
 
 .table-responsive th,
 .table-responsive td {
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
+  white-space: nowrap; /* 👈 Uzun metinler satır atlamasın, scroll oluşsun */
 }
 
 .edit-column {

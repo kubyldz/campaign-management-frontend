@@ -1,3 +1,5 @@
+/* Soldaki responsive hamburger yapıda left nav bar */
+
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -20,29 +22,12 @@
 }
 
 
-.navbar {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 0 20px;
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  left: 0;
-  width: 100%;
-}
-
-
-
 .nav-left {
   display: flex;
   flex-direction: column;
   position: fixed;
   left: 0;
-  top: 60px;
+  top: 0 ;
   bottom: 0;
   width: 250px;
   background-color: #f5f5f5;
@@ -90,10 +75,25 @@
 }
 
 .main-content {
-  margin-left: 250px;
+  margin-left: 0;
   padding: 20px;
-  transition: margin-left 0.3s ease;
+  transition: margin-left 0.3s ease, transform 0.3s ease;
 }
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    transform: translateX(0);
+    width: 100vw;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .main-content.menu-open {
+    transform: translateX(250px);
+  }
+}
+
 
 .nav-link.active {
   color: #2196F3;
@@ -129,4 +129,14 @@
   .menu-toggle {
     display: none;
   }
-} 
+
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+    }
+
+    .main-content.menu-open {
+      margin-left: 250px;
+    }
+  }
+}
